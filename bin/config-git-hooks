@@ -1,0 +1,17 @@
+#! /bin/sh
+# config-git-hooks
+
+HOOKSDIR=~/.githooks
+
+ls $HOOKSDIR 1>/dev/null 2>/dev/null
+if [ $? -ne 0 ]; then
+    echo "$HOOKSDIR does not exist"
+
+    read -p "Do you still want to configure hooks path? (y/N)" n
+    if [ "$n" != 'y' ]; then
+        exit
+    fi
+fi
+
+echo "Configuring hooks path ($HOOKSDIR) for current git repository"
+git config core.hooksPath $HOOKSDIR
