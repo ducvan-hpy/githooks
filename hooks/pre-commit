@@ -1,0 +1,26 @@
+#!/bin/sh
+
+validate() {
+    dirname=`dirname $1`
+    filename=`basename $1`
+
+    cd $dirname
+    perl -c $filename
+    [ $? -ne 0 ] && exit_on_error $1
+    cd -
+}
+
+exit_on_error() {
+    echo "\033[31mFail to validate $1\033[39m"
+    rm -rf $TMPDIR
+    exit 1
+}
+
+TMPDIR=`mktemp -d`
+
+git checkout-index --prefix=$TMPDIR/ -af
+for file in `git diff --cached --name-only --diff-filter=ACMR | grep '\.p[lpm]'`; do
+    validate $file
+done
+
+rm -rf $TMPDIR
